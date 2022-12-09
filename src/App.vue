@@ -131,6 +131,10 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
+  display: none;
 }
 button {
   cursor: pointer;
