@@ -1,5 +1,6 @@
 "use strict";
 
+/* main.js */
 import { app, protocol, BrowserWindow } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
@@ -24,9 +25,9 @@ async function createWindow() {
     // 메뉴바 숨김여부
     autoHideMenuBar: true,
     webPreferences: {
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
+      // node기반 라이브러리 사용여부, 기본값 true
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      // preload 스크립트, 기본값 true
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
     },
   });
@@ -42,10 +43,9 @@ async function createWindow() {
   }
 }
 
-// Quit when all windows are closed.
+//[생명주기] 모든 창이 닫히면 자동으로 앱 종료
 app.on("window-all-closed", () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
+  // darwin(unix) 운영체제 = macOS
   if (process.platform !== "darwin") {
     app.quit();
   }
