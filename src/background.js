@@ -2,6 +2,7 @@
 
 /* main.js */
 import { app, protocol, BrowserWindow } from "electron";
+import { isDev } from "electron-is-dev";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 const isDevelopment = process.env.NODE_ENV !== "production";
@@ -13,7 +14,7 @@ protocol.registerSchemesAsPrivileged([
 
 async function createWindow() {
   // Create the browser window.
-  //368 528
+  // window default width, height(min, max값도 가능)
   const win = new BrowserWindow({
     width: 520,
     height: 660,
@@ -40,6 +41,10 @@ async function createWindow() {
     createProtocol("app");
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
+  }
+  // devMode 일때 devtools autoOpen, electron-is-dev 추가해야함
+  if (isDev) {
+    win.webContents.openDevTools();
   }
 }
 
