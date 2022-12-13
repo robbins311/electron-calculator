@@ -1,7 +1,7 @@
 "use strict";
 
-/* main.js */
-import { app, protocol, BrowserWindow } from "electron";
+/* main.js, elctron 진입점 */
+import { app, protocol, BrowserWindow, autoUpdater, dialog } from "electron";
 import { isDev } from "electron-is-dev";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
@@ -74,6 +74,7 @@ app.on("ready", async () => {
       console.error("Vue Devtools failed to install:", e.toString());
     }
   }
+  autoUpdater.checkForUpdates();
   createWindow();
 });
 
@@ -91,3 +92,47 @@ if (isDevelopment) {
     });
   }
 }
+autoUpdater.on("checking-for-update", function () {
+  console.log("Checking-for-update");
+});
+autoUpdater.on("error", function (error) {
+  console.error("error", error);
+});
+autoUpdater.on(
+  "download-progress",
+  function (bytesPerSecond, percent, total, transferred) {
+    console.log(`${bytesPerSecond}, ${percent}, ${total}, ${transferred}`);
+  }
+);
+//다운로드 완료되면 업데이트
+autoUpdater.on(
+  "update-downloaded",
+  function (event, releaseNotes, releaseName) {
+    console.log("update-downloaded");
+    const dialogOpts = {
+      type: "info",
+      buttons: ["재시작", "종료"],
+      title: "Application Update",
+      message: process.platform === "win32" ? releaseNotes : releaseName,
+      detail:
+        "새로운 버전이 다운로드 되었습니다. 애플리케이션을 재시작하여 업데이트를 적용해 주세요.",
+    };
+    dialog.showMessageBox(dialogOpts, (response) => {
+      if (response === 0) {
+        autoUpdater.quitAndInstall();
+      } else {
+        app.quit();
+        app.exit();
+      }
+    });
+  }
+);
+//신규 업로드가 있을경우 === 구버전
+autoUpdater.on("update-available", function () {
+  console.log("A new update is available");
+});
+
+//신규 업로드가 없을경우 === 최신버전
+autoUpdater.on("update-not-available", function () {
+  console.log("update-not-available");
+});
