@@ -6,7 +6,7 @@ module.exports = defineConfig({
       builderOptions: {
         productName: "Calculator App",
         win: {
-          icon: "public/cal_icon.ico",
+          icon: "public/cal_icon.icns",
         },
         nsis: {
           installerIcon: "public/favicon.ico",
